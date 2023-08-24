@@ -6,39 +6,39 @@ bool s21_is_zero(s21_decimal value) {
   return value.bits[0] == 0 && value.bits[1] == 0 && value.bits[2] == 0 && 1;
 }
 
-int s21_get_exp(s21_decimal src) { return (src.bits[3] & EXP) >> 16; }
+int s21_get_exp(s21_decimal value) { return (value.bits[3] & EXP) >> 16; }
 
-s21_big_decimal s21_transfer_to_big(s21_decimal src) {
+s21_big_decimal s21_transfer_to_big(s21_decimal value) {
   s21_big_decimal res = {0};
-  uint16_t exp = s21_get_exp(src);
-  for (int i = 0; i < 3; i++) res.bits[i] = src.bits[i] & UINT_MAX;
+  uint16_t exp = s21_get_exp(value);
+  for (int i = 0; i < 3; i++) res.bits[i] = value.bits[i] & UINT_MAX;
   res.exp = exp;
   return res;
 }
 
-bool s21_is_overflow(s21_big_decimal src) {
+bool s21_is_overflow(s21_big_decimal value) {
   bool res = 0;
-  for (int i = 3; i < 7 && !res; i++) res = src.bits[i] ? 1 : 0;
+  for (int i = 3; i < 7 && !res; i++) res = value.bits[i] ? 1 : 0;
   return res;
 }
 
-bool s21_check_overflow(s21_big_decimal *src) {
+bool s21_check_overflow(s21_big_decimal *value) {
   uint32_t overflow = 0;
   for (int i = 0; i < 7; i++) {
-    src->bits[i] += overflow;
-    overflow = src->bits[i] >> 32;
-    src->bits[i] &= UINT_MAX;
+    value->bits[i] += overflow;
+    overflow = value->bits[i] >> 32;
+    value->bits[i] &= UINT_MAX;
   }
-  return s21_is_overflow(*src);
+  return s21_is_overflow(*value);
 }
 
-bool s21_point_left(s21_big_decimal *src) {
+bool s21_point_left(s21_big_decimal *value) {
   bool overflow = 0;
-  s21_big_decimal copy = *src;
+  s21_big_decimal copy = *value;
   for (int i = 0; i < 7; i++) copy.bits[i] *= 10;
   copy.exp++;
   overflow = s21_check_overflow(&copy);
-  if (!overflow && src->exp < 28) *src = copy;
+  if (!overflow && value->exp < 28) *value = copy;
   return overflow;
 }
 
@@ -52,14 +52,14 @@ bool s21_normalize(s21_big_decimal *value_1, s21_big_decimal *value_2) {
   return res;
 }
 
-void s21_set_exp(s21_decimal *src, uint16_t exp) {
-  src->bits[3] |= (exp << 16);
+void s21_set_exp(s21_decimal *value, uint16_t exp) {
+  value->bits[3] |= (exp << 16);
 }
 
-s21_decimal s21_transfer_to_decimal(s21_big_decimal src) {
+s21_decimal s21_transfer_to_decimal(s21_big_decimal value) {
   s21_decimal res = {0};
-  for (int i = 0; i < 3; i++) res.bits[i] = src.bits[i] & UINT_MAX;
-  s21_set_exp(&res, src.exp);
+  for (int i = 0; i < 3; i++) res.bits[i] = value.bits[i] & UINT_MAX;
+  s21_set_exp(&res, value.exp);
   return res;
 }
 
