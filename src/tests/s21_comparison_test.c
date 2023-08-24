@@ -1,4 +1,4 @@
-#include "test.h"
+#include "s21_decimal_test.h"
 
 START_TEST(s21_is_equal_pos_pos) {
   s21_decimal var = {{50, 50, 50, 0}};
@@ -355,7 +355,6 @@ Suite *comparison_suite(void) {
   TCase *tc_comparison;
 
   s = suite_create("Comparison");
-
   tc_comparison = tcase_create("is equal");
 
   // s21_is_equal
@@ -363,11 +362,13 @@ Suite *comparison_suite(void) {
   tcase_add_test(tc_comparison, s21_is_equal_neg_neg);
   tcase_add_test(tc_comparison, s21_is_equal_er_pos_neg);
   tcase_add_test(tc_comparison, s21_is_equal_er);
+
   // s21_is_not_equal
   tcase_add_test(tc_comparison, s21_is_not_equal_pos_pos_er);
   tcase_add_test(tc_comparison, s21_is_not_equal_neg_neg_er);
   tcase_add_test(tc_comparison, s21_is_not_equal_pos_neg);
   tcase_add_test(tc_comparison, s21_is_not_equal_pos_pos);
+
   // s21_is_less
   tcase_add_test(tc_comparison, s21_is_less_equal);
   tcase_add_test(tc_comparison, s21_is_less_pos_neg);
@@ -376,6 +377,7 @@ Suite *comparison_suite(void) {
   tcase_add_test(tc_comparison, s21_is_less_pos_pos_er);
   tcase_add_test(tc_comparison, s21_is_less_neg_neg);
   tcase_add_test(tc_comparison, s21_is_less_neg_neg_er);
+
   // s21_is_less_or_equal
   tcase_add_test(tc_comparison, s21_is_less_or_equal_eq);
   tcase_add_test(tc_comparison, s21_is_less_or_equal_pos_neg);
@@ -384,6 +386,7 @@ Suite *comparison_suite(void) {
   tcase_add_test(tc_comparison, s21_is_less_or_equal_pos_pos_er);
   tcase_add_test(tc_comparison, s21_is_less_or_equal_neg_neg);
   tcase_add_test(tc_comparison, s21_is_less_or_equal_neg_neg_er);
+
   // s21_is_greater
   tcase_add_test(tc_comparison, s21_is_greater_eq);
   tcase_add_test(tc_comparison, s21_is_greater_pos_neg);
@@ -392,6 +395,7 @@ Suite *comparison_suite(void) {
   tcase_add_test(tc_comparison, s21_is_greater_pos_pos_er);
   tcase_add_test(tc_comparison, s21_is_greater_neg_neg);
   tcase_add_test(tc_comparison, s21_is_greater_neg_neg_er);
+
   // s21_is_greater_or_equal
   tcase_add_test(tc_comparison, s21_is_greater_or_equal_eq);
   tcase_add_test(tc_comparison, s21_is_greater_or_equal_pos_neg);

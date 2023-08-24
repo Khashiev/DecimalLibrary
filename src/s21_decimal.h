@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MINUS 0x80000000
 #define EXP 0x00ff0000
 
 typedef struct {
@@ -22,15 +21,12 @@ typedef struct {
 } s21_big_decimal;
 
 // helpers
-int s21_get_bit(unsigned int num, unsigned index);
-int s21_get_sign(s21_decimal num);
-int s21_find_bit(s21_decimal num, int index);
-int s21_get_scale(s21_decimal dst);
+int s21_get_sign(s21_decimal value);
+int s21_get_exp(s21_decimal value);
+int s21_mantisa_compare(s21_decimal value_1, s21_decimal value_2);
+bool s21_is_zero(s21_decimal value);
 bool s21_normalize(s21_big_decimal *value_1, s21_big_decimal *value_2);
-bool s21_check_exp(s21_decimal src);
-int s21_get_exp(s21_decimal src);
-void s21_set_exp(s21_decimal *src, uint16_t exp);
-s21_big_decimal s21_transfer_to_big(s21_decimal src);
+s21_big_decimal s21_transfer_to_big(s21_decimal value);
 s21_decimal s21_transfer_to_decimal(s21_big_decimal src);
 
 // Comparison

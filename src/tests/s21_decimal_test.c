@@ -1,4 +1,4 @@
-#include "test.h"
+#include "s21_decimal_test.h"
 
 int main(void) {
   int no_failed;
