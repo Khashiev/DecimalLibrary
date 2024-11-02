@@ -1,40 +1,52 @@
 CC=gcc
-CFLAGS=-c -Wall -Wextra -Werror
+CFLAGS=-Wall -Wextra -Werror
 AFLAGS=ar rc
 
-SOURCES=$(wildcard *.c)
-TESTS=$(wildcard ./tests/*test.c)
+SOURCES=$(wildcard s21_*.c)
 OBJECTS=$(patsubst %.c, %.o, $(SOURCES))
-TESTOBJ=$(patsubst %.c, %.o, $(TESTS))
-LIBSRC=$(wildcard s21_*.c)
-LIBOBJ=$(patsubst %.c, %.o, $(LIBSRC))
+
+TEST_SRC=$(wildcard run_test.c)
+TEST_OBJ = $(patsubst %.c,%.o, ${TEST_SRC})
+
+GCOVFLAGS=-fprofile-arcs -ftest-coverage
 
 ifeq ($(shell uname -s),Linux)
-OPEN_CMD=xdg-open
-OFLAGS=-lcheck -lsubunit -lm -lrt -lpthread -lgcov -o 
+OFLAGS=-lcheck -lsubunit -lm -lrt -lpthread
 endif
-ifeq ($(shell uname -s),Darwin) 
-OPEN_CMD=open
-OFLAGS=-lcheck -lm -lpthread -lgcov -o
+ifeq ($(shell uname -s),Darwin)
+OFLAGS=-lcheck -lm -lpthread
 endif
 
-all: s21_decimal.a $(SOURCES) test 
 
-test: $(OBJECTS) $(TESTOBJ)
-	$(CC) $(OBJECTS) $(TESTOBJ) $(OFLAGS) $@
+all: s21_decimal.a gcov_report clean
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+s21_decimal.a: $(OBJECTS)
+	ar rc s21_decimal.a $^
+	ranlib s21_decimal.a
+
+test: s21_decimal.a 
+	$(CC) $(CFLAGS) ${TEST_SRC} $(GCOVFLAGS) $< -o test $(OFLAGS)
+	./test
 
 retest: clean test
 
-s21_decimal.a:
-	$(CC) $(CFLAGS) $(LIBSRC)
-	$(AFLAGS) s21_decimal.a $(LIBOBJ)
-	rm -rf *.o
+gcov_report: test
+	lcov -t "./gcov" -o gcov.info --no-external -c -d .
+	genhtml -o gcov gcov.info
+	open ./gcov/index.html
+
+style_check:
+	clang-format -style=google -n *.c
+	clang-format -style=google -n *.h
 
 clean:
-	rm -rf *.o *.a *.gcno *.gcda *.info *.html *.css *.png *.out.dSYM main.c *.out
-	rm -rf ./tests/*.o ./tests/*.gcda ./tests/*.gcno
-	rm -rf test src
+	rm -rf *.o *.a *.gcno *.gcda *.info 
+	rm -rf test 
 
-rebuild: clean all
+clean_gcov:
+	rm -rf gcov
 
-
+rebuild: clean clean_gcov all
